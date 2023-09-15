@@ -1,10 +1,18 @@
+<!--aqui se reciben la entrada de gifs-->
 <div class="row">
-  <div class="col-md-3 col-sm-6">
+  <!--ngfor itera 10 veces mostrando los gifs-->
+  <div *ngFor="let gif of gifs " class="col-md-3 col-sm-6">
     <div class="card mb-2 bg-dark text-center">
-      <!--TODO crear imagen-->
+
+      <!--experisones java script en tre llaves cuaradas [src]-->
+      <img
+      [src]="gif.images.downsized_medium.url"
+      [alt]="gif.title"
+      class="card-img-top">
 
       <div class="card-body text-white">
-        <p class="card-text">Hola mundo</p>
+        <!--gif.title para imprimir los nombres de los gifs-->
+        <p class="card-text">{{gif.title}}</p>
       </div>
     </div>
   </div>

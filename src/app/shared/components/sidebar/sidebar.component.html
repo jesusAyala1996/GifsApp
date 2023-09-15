@@ -4,8 +4,15 @@
   </h3>
   <hr class="text-light">
   <div class="list-group list-reset">
-    <button class="list-group-item list-group-item-action">
-      Valorant
+    <!--usar ngfor para iterar el servicio-->
+    <!--variabel tag que itera en el get tags-->
+    <!--evento click para disparar el metodo de searchTag-->
+    <button *ngFor="let tag of tags"
+    class="list-group-item list-group-item-action"
+    (click)="searchTag(tag)">
+    <!--imprime la variable tag que itera el array de tags con los gigs buscados-->
+    <!-- pipe | uppercase muta visualmente sin cambiar la data real -->
+    {{tag | titlecase }}
     </button>
 
   </div>
