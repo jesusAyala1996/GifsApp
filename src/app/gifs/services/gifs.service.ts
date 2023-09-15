@@ -6,16 +6,18 @@ import { Gif, SearchResponse } from '../interface/gifs.interface';
 
 @Injectable({ providedIn: 'root' })
 export class GifsService {
-
-
-  public gifList:Gif[]=[]
+  public gifList: Gif[] = [];
 
   private _tagHistory: string[] = [];
   private apiKey: string = '7dE4U7dRRMokaAn2OCKcby9E5um6UtYu';
-  private serviceUrl :string = "https://api.giphy.com/v1/gifs"
+  private serviceUrl: string = 'https://api.giphy.com/v1/gifs';
 
   //inteccion servicio http HttpClient
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    //llamado a la funcion loadLocalStorage
+    this.loadLocalStorage();
+    console.log('Gifs Service Ready');
+  }
 
   get tagHistory() {
     //retorna array con los elementos buscados
@@ -34,29 +36,43 @@ export class GifsService {
     this._tagHistory.unshift(tag);
     //splice limita el tamaño maximo del array (de 10 posiciones)
     this._tagHistory = this._tagHistory.splice(0, 10);
+
+    this.saveLocalStorage();
   }
+
+  private saveLocalStorage(): void {
+    //JSON.stringify convierte el array string para guardar en el ocal storage
+    localStorage.setItem('history', JSON.stringify(this.tagHistory));
+  }
+
+  private loadLocalStorage(): void {
+    if (!localStorage.getItem('history')) return;
+    //se usa ! para indicar que siempre va haber data,JSON.parse para convertir a array
+    this._tagHistory = JSON.parse(localStorage.getItem('history')!);
+    if (this._tagHistory.length === 0) return;
+    this.searchTag(this._tagHistory[0]);
+  }
+
   searchTag(tag: string): void {
     //si el usuario no escribe nada en el input, no retorna nada
     if (tag.length === 0) return;
     //llamado al metodo organizeHistory
     this.organizeHistory(tag);
 
-//constante con el url de la api renombrado y los atributos de limite y tag
+    //constante con el url de la api renombrado y los atributos de limite y tag
     const params = new HttpParams()
-    .set("api_key", this.apiKey)
-    .set("limit", "10")
-    .set("q", tag)
-
+      .set('api_key', this.apiKey)
+      .set('limit', '10')
+      .set('q', tag);
 
     //.subscribe es un observable = un objeto el cual puede emitir valroes a lo largo del tiempo, escuchar las emisiones que emita
     //get recibe el objeto params que tiene el url de la api renombrado
     //get de tipo generico SearchResponse
-    this.http.get<SearchResponse>(
-      `${this.serviceUrl}/search?`,{params}).subscribe
-      (resp =>{
-      this.gifList = resp.data
-
-    })
+    this.http
+      .get<SearchResponse>(`${this.serviceUrl}/search?`, { params })
+      .subscribe((resp) => {
+        this.gifList = resp.data;
+      });
 
     //url de la api
     //("https://api.giphy.com/v1/gifs/search?api_key=7dE4U7dRRMokaAn2OCKcby9E5um6UtYu&q=valorant&limit=10")

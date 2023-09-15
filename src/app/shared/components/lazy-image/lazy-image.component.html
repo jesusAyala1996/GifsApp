@@ -1,0 +1,20 @@
+<div class="d-flex justify-content-center">
+  <!--metodos (load)="onLoad()" para validar cuando una imagen se ha cargado-->
+  <!--[ngStyle] para agregar condicionales en base a clases de angular-->
+  <img
+    [src]="url"
+    [alt]="alt"
+    class="card-img-top animate__animated animate__fadeIn"
+    (load)="onLoad()"
+    [ngStyle]="{ display: hasLoaded ? '' : 'none' }"
+  />
+
+  <!--condicional !hasLoaded parar mostrar el loader-->
+  <img
+    *ngIf="!hasLoaded"
+    src="assets/loader.svg"
+    height="35"
+    widht="35"
+    class="mt-3"
+  />
+</div>
